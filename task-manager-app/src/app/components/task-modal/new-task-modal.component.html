@@ -1,0 +1,155 @@
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center px-4 py-4">
+  <!-- Modal Container -->
+  <div class="bg-white w-full max-w-md max-h-[90vh] overflow-y-auto rounded shadow-lg p-6 sm:p-8">
+    
+    <!-- Header with Title and Status Toggle -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold">NEW TASK</h2>
+      <div class="flex border rounded overflow-hidden">
+        <button
+          class="px-4 py-1"
+          [class.bg-orange-500]="formData.status === 'Open'"
+          [class.bg-gray-100]="formData.status !== 'Open'"
+          [class.text-white]="formData.status === 'Open'"
+          [class.text-gray-600]="formData.status !== 'Open'"
+          (click)="setStatus('Open')"
+          type="button"
+          required
+        >
+          Open
+        </button>
+        <button
+          class="px-4 py-1"
+          [class.bg-orange-500]="formData.status === 'Closed'"
+          [class.bg-gray-100]="formData.status !== 'Closed'"
+          [class.text-white]="formData.status === 'Closed'"
+          [class.text-gray-600]="formData.status !== 'Closed'"
+          (click)="setStatus('Closed')"
+          type="button"
+        >
+          Closed
+        </button>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form class="space-y-5" (ngSubmit)="saveTask()">
+      <input
+        type="text"
+        placeholder="Entity name"
+        class="w-full bg-gray-100 px-4 py-4 rounded"
+        [(ngModel)]="formData.entityName"
+        name="entityName"
+        required
+      />
+
+      <div class="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+        <input
+          type="date"
+          class="w-full sm:w-1/2 bg-gray-100 px-4 py-2 rounded"
+          [(ngModel)]="formData.date"
+          name="date"
+          required
+        />
+        <div class="flex bg-gray-100 space-x-2 rounded px-2 w-full sm:w-1/2">
+          <select
+            class="bg-gray-100 py-2 rounded w-1/3"
+            [(ngModel)]="formData.hour"
+            name="hour"
+            required
+          >
+            <option *ngFor="let hour of hours" [value]="hour">{{ hour }}</option>
+          </select>
+          <select
+            class="bg-gray-100 py-2 rounded w-1/3"
+            [(ngModel)]="formData.minute"
+            name="minute"
+            required
+          >
+            <option *ngFor="let minute of minutes" [value]="minute">{{ minute }}</option>
+          </select>
+          <select
+            class="bg-gray-100 py-2 rounded w-1/3"
+            [(ngModel)]="formData.meridian"
+            name="meridian"
+            required
+          >
+            <option *ngFor="let meridian of meridians" [value]="meridian">
+              {{ meridian }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Custom Dropdown with Icons -->
+      <div class="relative">
+        <div
+          class="border px-4 py-2 rounded flex items-center justify-between cursor-pointer"
+          (click)="dropdownOpen = !dropdownOpen"
+        >
+          <div class="flex items-center gap-2">
+            <img
+              *ngIf="getTaskImage(formData.taskType)"
+              [src]="getTaskImage(formData.taskType)"
+              alt=""
+              class="w-5 h-5"
+            />
+            <span>{{ formData.taskType || 'Task Type' }}</span>
+          </div>
+          <span class="text-gray-500">▼</span>
+        </div>
+
+        <div
+          *ngIf="dropdownOpen"
+          class="absolute z-10 bg-white border mt-1 w-full rounded shadow max-h-48 overflow-y-auto"
+        >
+          <div
+            *ngFor="let task of taskTypes"
+            class="px-4 py-2 hover:bg-gray-100 flex items-center gap-2 cursor-pointer"
+            (click)="selectTask(task)"
+          >
+            <img [src]="getTaskImage(task)" alt="" class="w-5 h-5" />
+            <span>{{ task }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Info -->
+      <input
+        type="text"
+        placeholder="Phone number"
+        class="w-full bg-gray-100 px-4 py-4 rounded"
+        [(ngModel)]="formData.phone"
+        name="phone"
+        required
+      />
+      <input
+        type="text"
+        placeholder="Contact person"
+        class="w-full bg-gray-100 px-4 py-4 rounded"
+        [(ngModel)]="formData.contact"
+        name="contact"
+        required
+      />
+      <textarea
+        rows="3"
+        placeholder="Note (optional)"
+        class="w-full bg-gray-100 px-4 py-2 rounded resize-none"
+        [(ngModel)]="formData.note"
+        name="note"
+      ></textarea>
+
+      <!-- Buttons -->
+      <div class="flex justify-end space-x-4 mt-4">
+        <button type="button" class="text-gray-600" (click)="cancel()">CANCEL</button>
+        <button
+          type="submit"
+          class="bg-[#054b6e] text-white px-10 py-3 rounded"
+        >
+          SAVE
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

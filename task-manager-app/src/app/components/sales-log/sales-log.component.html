@@ -1,0 +1,361 @@
+<div
+  class="bg-white rounded shadow-lg p-6
+         max-w-[100vw] mx-10 mt-10">
+
+<div class="flex justify-between items-center px-6 py-6" style="background-color: #F8F8F8;">
+  <!-- Left: Title + Button -->
+  <div class="flex items-center gap-4">
+    <h1 class="text-sm font-bold uppercase tracking-wider text-black">Sales Log</h1>
+    <button class="flex items-center gap-2 px-5 py-3 border border-black text-sm rounded hover:bg-gray-100"
+      (click)="showModal = true">
+      <span class="flex items-center justify-center w-5 h-5 border-2 border-blue-900 rounded-full text-blue-900 text-xs font-bold leading-none">
+      +
+    </span>
+      <span class="text-black font-medium">New Task</span>
+    </button>
+  </div>
+
+  <!-- Right: Search -->
+  <div class="w-1/3">
+    <input type="text" placeholder="Search"
+      class="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+  </div>
+</div>
+
+<!-- Filter Hint -->
+<!-- ↓ REPLACED FILTER‐HINT WITH THIS ↓ -->
+<div class="px-6 py-6 mb-5 bg-white">
+  <ng-container *ngIf="selectedTaskTypes.length > 0; else filterHint">
+    <div class="flex flex-wrap gap-2">
+      <div
+        *ngFor="let type of selectedTaskTypes"
+        class="flex items-center gap-1 bg-blue-100 text-blue-900 text-sm px-3 py-2 rounded-md font-medium"
+      >
+        <!-- OPTIONAL: You can drop in an icon here based on `type` if you like.
+             For simplicity, we’ll just show the label e.g. “Call” or “Meeting”. -->
+        <span>{{ type }}</span>
+
+        <!-- “×” button to remove that filter -->
+        <button (click)="removeTaskType(type)">
+          <svg xmlns="http://www.w3.org/2000/svg"
+     class="h-4 w-4"
+     viewBox="0 0 20 20"
+     fill="currentColor"
+>
+  <path fill-rule="evenodd"
+        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+        clip-rule="evenodd"
+  />
+</svg>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- original hint falls back here when no filters selected -->
+  <ng-template #filterHint>
+    <p class="text-sm text-black font-medium">
+      Use the
+      <span class="inline-block text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+      </span>
+      icon next to the table titles to apply filters
+    </p>
+  </ng-template>
+</div>
+
+
+<!-- Table -->
+<div class="min-h-[100vh] bg-white shadow rounded">
+  <table class="min-w-full text-left border-separate border-spacing-0">
+    <thead class="bg-white text-gray-600">
+      <tr class="border-b text-md font-medium text-gray-400">
+  <th class="p-3 cursor-pointer" (click)="filterTasks('date')">
+    <div class="flex gap-1">
+    Date
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M7 14l5-5 5 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7 10l5 5 5-5" transform="translate(0,9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    </div>
+  </th>
+  <th class="p-3 cursor-pointer" (click)="filterTasks('entity_name')">
+    <div class="flex items-center gap-1">
+    Entity Name
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M7 14l5-5 5 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7 10l5 5 5-5" transform="translate(0,9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    </div>
+  </th>
+  <th class="p-3 cursor-pointer relative">
+  <div class="flex items-center gap-1">
+    Task Type
+
+    <!-- ✅ wrapper around both SVG and dropdown -->
+    <div class="relative" clickOutside (clickOutside)="closeDropdown()">
+
+      <!-- SVG toggle -->
+      <svg
+        (click)="toggleFilter('task_type')"
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4"
+        [ngClass]="{ 'text-black': isTaskTypeFilterOpen, 'text-gray-500': !isTaskTypeFilterOpen }"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+      </svg>
+      
+      <div
+    *ngIf="isTaskTypeFilterOpen"
+    class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-10 p-4"
+  >
+        <p class="text-xs font-semibold text-gray-500 mb-2">TASK TYPE</p>
+        <div class="space-y-3 text-sm">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" name="meeting" class="form-checkbox" [(ngModel)]="filters.meeting" (change)="applyTaskTypeFilter()" />
+            <img src="assets/location.png" alt="Meeting" class="w-4 h-4 pointer-events-none" />
+            Meeting
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" name="call" class="form-checkbox" [(ngModel)]="filters.call" (change)="applyTaskTypeFilter()" />
+            <img src="assets/call.png" alt="Call" class="w-4 h-4 pointer-events-none" />
+            Call
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" name="videoCall" class="form-checkbox" [(ngModel)]="filters.videoCall" (change)="applyTaskTypeFilter()" />
+            <img src="assets/webcam.png" alt="Video Call" class="w-4 h-4 pointer-events-none" />
+            Video Call
+          </label>
+        </div>
+      </div>
+
+    </div> <!-- end relative with clickOutside -->
+  </div>
+</th>
+
+  <th class="p-3 cursor-pointer" (click)="filterTasks('task_time')">
+    <div class="flex items-center gap-1">
+    Time
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M7 14l5-5 5 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7 10l5 5 5-5" transform="translate(0,9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    </div>
+  </th>
+  <th class="p-3 cursor-pointer" (click)="filterTasks('contact_person')">
+    <div class="flex items-center gap-1">
+    Contact Person
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M7 14l5-5 5 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7 10l5 5 5-5" transform="translate(0,9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    </div>
+  </th>
+  <th class="p-3 cursor-pointer" (click)="filterTasks('note')">
+    <div class="flex items-center gap-1">
+    Notes
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+    </div>
+  </th>
+  <th class=" cursor-pointer" (click)="filterTasks('status')">
+    <div class="flex items-center gap-1">
+    Status
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 01.8 1.6L13 10.4v5.6a1 1 0 01-1.447.894l-2-1A1 1 0 018 15v-4.6L3.2 4.6A1 1 0 013 4z" clip-rule="evenodd" />
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M7 14l5-5 5 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M7 10l5 5 5-5" transform="translate(0,9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    </div>
+  </th>
+  <th class="p-3"></th>
+</tr>
+
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let group of groupedTasks">
+<tr>
+  <td colspan="9" class="py-3">
+    <div class="flex items-center text-sm text-gray-800 font-bold gap-4">
+      <div class="whitespace-nowrap ml-2">
+        {{ group.formattedDate }} 
+        <span class="text-gray-600 font-normal ml-2">
+          {{ group.label }} {{ group.openCount }} Open
+        </span>
+      </div>
+      <div class="flex-grow border-t border-gray-300"></div>
+    </div>
+  </td>
+</tr>
+      <tr *ngFor="let task of group.tasks" class="border-t hover:bg-gray-50">
+        <td class="p-3">{{formatDate( task.date )}}</td>
+        <td class="p-3 text-blue-900 cursor-pointer">{{ task.entity_name }}</td>
+        <td class="p-3">
+  <img 
+    *ngIf="task.task_type === 'Call'" 
+    src="assets/call.png" 
+    alt="Call" 
+    class="w-5 h-5 inline"
+  />
+  <span *ngIf="task.task_type === 'Call'">  Call</span>
+    <img 
+    *ngIf="task.task_type === 'Meeting'" 
+    src="assets/location.png" 
+    alt="Meeting" 
+    class="w-5 h-5 inline"
+  />
+  <span *ngIf="task.task_type === 'Meeting'">  Meeting</span>
+  <img 
+    *ngIf="task.task_type === 'Video Call'" 
+    src="assets/webcam.png" 
+    alt="Call" 
+    class="w-5 h-5 inline"
+  />
+  <span *ngIf="task.task_type === 'Video Call'">  Video Call</span>
+</td>
+
+        <td class="p-3">{{ task.task_time }}</td>
+        <td class="p-3">{{ task.contact_person }}</td>
+        <td class="p-3 text-gray-500 truncate max-w-xs">
+          <div *ngIf="!task.note || task.note.trim() === ''">
+  <button
+    (click)="addNoteForTask(task)"
+    class="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-md text-sm text-gray-800 hover:bg-gray-200 shadow-sm"
+  >
+    <span class="flex items-center justify-center w-5 h-5 border-2 border-blue-900 rounded-full text-blue-900 text-xs font-bold leading-none">
+      +
+    </span>
+    Add Note
+  </button>
+  <!-- Add Note Modal -->
+<div
+  *ngIf="selectedTask"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+>
+  <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+    <h2 class="text-lg font-semibold mb-4">Add Note for Task</h2>
+    <textarea
+      [(ngModel)]="noteText"
+      rows="4"
+      class="w-full p-2 border rounded-md focus:outline-none focus:ring"
+      placeholder="Enter your note here..."
+    ></textarea>
+    <div class="flex justify-end mt-4 gap-2">
+      <button
+        (click)="closeNoteModal()"
+        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+      >
+        Cancel
+      </button>
+      <button
+        (click)="saveNote()"
+        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Save Note
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+          <div *ngIf="task.note && task.note.trim() !== ''">
+            <p>{{ task.note }}</p>
+          </div>
+        </td>
+        <td class="p-3 relative group">
+  <span class="font-mono text-lg tracking-wider inline-block relative">
+    <span
+      [ngClass]="{
+        'text-green-500': task.status === 'Open',
+        'text-blue-500': task.status === 'Closed'
+      }"
+      class="border-b-2 border-dotted border-current pb-0.5 cursor-pointer"
+    >
+      {{ task.status }}
+    </span>
+    <span *ngIf="task.status === 'Closed'" class="text-blue-500 ml-1">└─</span>
+
+    <!-- Hover Dropdown -->
+  <div class="absolute z-10 top-full pl-4 pr-4 pt-5 pb-5 mt-2 bg-white border border-gray-300 shadow rounded-md hidden group-hover:block">
+    <div class="font-bold mb-2"> STATUS</div>
+    <div class="flex rounded overflow-hidden border border-gray-200">
+      <button
+        class="w-1/2 px-4 py-2 text-white bg-orange-500 font-medium focus:outline-none"
+        [ngClass]="{ 'bg-orange-500 text-white': task.status === 'Open', 'bg-gray-100 text-gray-600': task.status !== 'Open' }"
+        (click)="changeStatus(task, 'Open')"
+      >
+        Open
+      </button>
+      <button
+        class="w-1/2 px-4 py-2 font-medium focus:outline-none"
+        [ngClass]="{ 'bg-orange-500 text-white': task.status === 'Closed', 'bg-gray-100 text-gray-600': task.status !== 'Closed' }"
+        (click)="changeStatus(task, 'Closed')"
+      >
+        Closed
+      </button>
+    </div>
+  </div>
+
+  </span>
+</td>
+        <td class="p-3">
+          <!-- Inside your td -->
+<div class="relative inline-block text-left">
+  <button
+    class="flex items-center gap-2 px-2 py-2 bg-gray-100 rounded-md text-sm text-black font-bold hover:bg-gray-200 shadow-sm"
+    (click)="toggleDropdown(task.id)"
+    #btn
+  >
+    Options
+    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+    </svg>
+  </button>
+
+  <div
+    *ngIf="dropdownOpenTaskId === task.id.toString()"
+    [ngStyle]="getDropdownStyle(btn)"
+    class="origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+  >
+    <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+      <div class="block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left">OPTIONS</div>
+      <button (click)="editTask(task)" class="block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left">Edit</button>
+      <button (click)="duplicateTask(task)" class="block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left">Duplicate</button>
+      <button (click)="changeStatusToClose(task)" class="block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left">Change Status to Close</button>
+      <button (click)="deleteTask(task)" class="block px-4 py-2 text-sm hover:bg-gray-100 w-full text-left">Delete Task</button>
+    </div>
+  </div>
+</div>
+        </td>
+      </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<app-new-task-modal
+  *ngIf="showModal"
+  [task]="selectedTask"
+  (close)="showModal = false"
+  (save)="handleSave($event)">
+</app-new-task-modal>
+
