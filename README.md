@@ -93,5 +93,14 @@ ng serve
 | PATCH  | `/tasks/<id>/status`  | Update task status (open/closed) |
 | PATCH  | `/tasks/<id>/note`    | Update task note      |
 
+### Screenshots
+
+<img width="943" alt="image" src="https://github.com/user-attachments/assets/a8f8662e-e290-4d83-b4ab-584cabeaf7a8" />
+<img width="935" alt="image" src="https://github.com/user-attachments/assets/365c4fee-9a1b-4a75-ad2d-2ebee09c4b44" />
+<img width="947" alt="image" src="https://github.com/user-attachments/assets/437c18d9-87aa-474d-9c55-7af905771333" />
+<img width="944" alt="image" src="https://github.com/user-attachments/assets/f65a1df1-0279-4c5f-8956-bd572c59c258" />
+<img width="943" alt="image" src="https://github.com/user-attachments/assets/4e742c21-17af-4b2d-ba4b-75bd1d0bf5e5" />
+
+
 ### License
 This project is for technical assessment/demo purposes only.
