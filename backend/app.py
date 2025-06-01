@@ -9,7 +9,6 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Secure config using env vars
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -47,7 +46,7 @@ def create_task():
     db.session.commit()
     return jsonify({"message": "Task created", "task": task.id}), 201
 
-# ✅ Get all tasks (with optional filters)
+
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
     filters = request.args
@@ -77,7 +76,7 @@ def get_tasks():
         'status': t.status
     } for t in tasks])
 
-# ✅ Get task by ID
+
 @app.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
     task = Task.query.get_or_404(task_id)
@@ -93,7 +92,7 @@ def get_task(task_id):
         'status': task.status
     })
 
-# ✅ Update task
+
 @app.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
     task = Task.query.get_or_404(task_id)
@@ -111,7 +110,7 @@ def update_task(task_id):
     db.session.commit()
     return jsonify({"message": "Task updated"})
 
-# ✅ Delete task
+
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
@@ -119,7 +118,7 @@ def delete_task(task_id):
     db.session.commit()
     return jsonify({"message": "Task deleted"})
 
-# ✅ Change task status
+
 @app.route('/tasks/<int:task_id>/status', methods=['PATCH'])
 def change_status(task_id):
     task = Task.query.get_or_404(task_id)
